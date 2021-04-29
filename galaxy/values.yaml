@@ -336,6 +336,7 @@ configs:
       build_sites_config_file: "/galaxy/server/config/build_sites.yml"
       shed_data_manager_config_file: "/galaxy/server/config/mutable/shed_data_manager_conf.xml"
       shed_tool_data_table_config: "/galaxy/server/config/mutable/shed_tool_data_table_conf.xml"
+      object_store_config_file: "/galaxy/server/config/object_store_conf.xml"
       enable_data_manager_user_view: true
       tool_path: "{{.Values.persistence.mountPath}}/tools"
       tool_data_path: "{{.Values.persistence.mountPath}}/tool-data"
@@ -425,6 +426,8 @@ configs:
     {{- (.Files.Get "files/configs/integrated_tool_panel.xml") }}
   tool_conf.xml: |
     {{- (.Files.Get "files/configs/tool_conf.xml") }}
+  object_store_conf.xml: |
+    {{- (.Files.Get "files/config/object_store_conf.xml") }}
 
 # Additional dynamic rules to map into the container.
 jobs:
@@ -592,3 +595,10 @@ nginx:
     pullPolicy: IfNotPresent
   conf:
     client_max_body_size: 100g
+
+irods:
+  replicaCount: 1
+  image:
+    repository: kxk302/irods-server
+    tag: latest
+    pullPolicy: IfNotPresent

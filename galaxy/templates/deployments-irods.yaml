@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "galaxy.fullname" . }}-irods
+  labels:
+    {{- include "galaxy.labels" . | nindent 4 }}
+{{- with .Values.irods.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+  replicas: {{ .Values.irods.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "galaxy.selectorLabels" $ | nindent 6 }}
+      app.kubernetes.io/component: galaxy-irods
+  template:
+    metadata:
+      labels:
+        {{- include "galaxy.selectorLabels" $ | nindent 8 }}
+        app.kubernetes.io/component: galaxy-irods
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "galaxy.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.securityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-irods
+          image: "{{ .Values.irods.image.repository }}:{{ .Values.irods.image.tag }}"
+          imagePullPolicy: {{ .Values.irods.image.pullPolicy }}
+          ports:
+            - name: galaxy-irods
+              containerPort: 1247
+              protocol: TCP
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
