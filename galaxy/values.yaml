@@ -598,7 +598,8 @@ nginx:
 
 irods:
   replicaCount: 1
+  port: 1247
   image:
     repository: kxk302/irods-server
-    tag: latest
+    tag: 0.1
     pullPolicy: IfNotPresent
