@@ -64,3 +64,15 @@ jobs:
       - name: Print workflow handler log
         run: bash -c "kubectl logs -n galaxy $(kubectl -n galaxy get pods | grep -o '[^ ]*galaxy-workflow[^ ]*')"
         if: always()
+      - name: Check appVersion
+        if: always()
+        run: |
+          appVersion=$(cat galaxy/Chart.yaml | grep ^appVersion: | awk '{print $2}' | tr -d '"')
+          apiVersion=$(curl http://localhost/api/version | jq -r '"\(.version_major).\(.version_minor)"')
+          if [ "$appVersion" != "$apiVersion" ]; then
+            echo "appVersion: $appVersion"          
+            echo "apiVersion: $apiVersion"
+            exit 1
+          fi  
+          
+          
