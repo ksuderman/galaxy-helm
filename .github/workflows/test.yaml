@@ -77,7 +77,6 @@ jobs:
           address=$(kubectl get svc -n galaxy galaxy-nginx -o jsonpath="http://{.spec.clusterIP}:{.spec.ports[0].port}/galaxy/api/version")
           #address="http://${{ steps.address.outputs.ip }}:8000/galaxy/api/version"
           echo "Address is $address"
-          curl $address
           apiVersion=$(curl $address | jq -r '"\(.version_major).\(.version_minor)"')
           echo "appVersion: $appVersion"          
           echo "apiVersion: $apiVersion"
