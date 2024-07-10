@@ -70,46 +70,18 @@ jobs:
       - name: Print nginx service info
         run: kubectl describe svc -n galaxy galaxy-nginx
         if: always()
-      - name: Check localhost
-        if: always()
-        run: curl https://localhost/api/version
-      - name: Check localhost/galaxy
-        if: always()
-        run: curl https://localhost/galaxy/api/version
-      - name: Get ip address
-        id: address
-        if: always()
-        run: echo "ip=$(kubectl get svc -n galaxy galaxy-nginx -o jsonpath='{.spec.clusterIP}')" >> $GITHUB_OUTPUT
-      - name: Check ip
-        if: always()
-        run: curl http://${{ steps.address.outputs.ip }}/api/version
-      - name: Check ip/galaxy
-        if: always()
-        run: curl http://${{ steps.address.outputs.ip }}/galaxy/api/version
-      - name: Check ip:8000
-        if: always()
-        run: curl http://${{ steps.address.outputs.ip }}:8000/api/version
-      - name: Check ip:8000/galaxy
-        if: always()
-        run: curl http://${{ steps.address.outputs.ip }}:8000/galaxy/api/version
-      - name: Check ip:8080
-        if: always()
-        run: curl http://${{ steps.address.outputs.ip }}:8080/api/version
-      - name: Check ip:8080/galaxy
-        if: always()
-        run: curl http://${{ steps.address.outputs.ip }}:8080/galaxy/api/version
       - name: Check appVersion
         if: always()
         run: |
           appVersion=$(cat galaxy/Chart.yaml | grep ^appVersion: | awk '{print $2}' | tr -d '"')
-          #address=$(kubectl get svc -n galaxy galaxy-nginx -o jsonpath='http://{.spec.clusterIP}/api/version')
-          address="http://localhost:8000/galaxy/api/version"
+          address=$(kubectl get svc -n galaxy galaxy-nginx -o jsonpath="http://{.spec.clusterIP}:{.spec.ports[0].port}/api/version")
+          #address="http://${{ steps.address.outputs.ip }}:8000/galaxy/api/version"
           echo "Address is $address"
           curl $address
           apiVersion=$(curl $address | jq -r '"\(.version_major).\(.version_minor)"')
+          echo "appVersion: $appVersion"          
+          echo "apiVersion: $apiVersion"
           if [ "$appVersion" != "$apiVersion" ]; then
-            echo "appVersion: $appVersion"          
-            echo "apiVersion: $apiVersion"
             exit 1
           fi  
           
