@@ -68,16 +68,16 @@ jobs:
         run: kubectl describe svc -n galaxy galaxy-nginx
         if: always()
       - name: Check localhost
-        if: alwyas()
+        if: always()
         run: curl http://localhost/api/version
       - name: Check localhost
-        if: alwyas()
+        if: always()
         run: curl http://localhost/galaxy/api/version
       - name: Check localhost
-        if: alwyas()
+        if: always()
         run: curl http://localhost:8000/api/version
       - name: Check localhost
-        if: alwyas()
+        if: always()
         run: curl http://localhost:8000/galaxy/api/version
       - name: Check appVersion
         if: always()
