@@ -72,7 +72,7 @@ jobs:
         run: |
           appVersion=$(cat galaxy/Chart.yaml | grep ^appVersion: | awk '{print $2}' | tr -d '"')
           #address=$(kubectl get svc -n galaxy galaxy-nginx -o jsonpath='http://{.spec.clusterIP}/api/version')
-          addreess="http://localhost:8000/galaxy/api/version"
+          address="http://localhost:8000/galaxy/api/version"
           echo "Address is $address"
           curl $address
           apiVersion=$(curl $address | jq -r '"\(.version_major).\(.version_minor)"')
