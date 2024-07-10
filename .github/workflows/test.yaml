@@ -64,21 +64,40 @@ jobs:
       - name: Print workflow handler log
         run: bash -c "kubectl logs -n galaxy $(kubectl -n galaxy get pods | grep -o '[^ ]*galaxy-workflow[^ ]*')"
         if: always()
+      - name: Print service info
+        run: kubectl get svc -n galaxy
+        if: always()
       - name: Print nginx service info
         run: kubectl describe svc -n galaxy galaxy-nginx
         if: always()
       - name: Check localhost
         if: always()
-        run: curl http://localhost/api/version
-      - name: Check localhost
+        run: curl https://localhost/api/version
+      - name: Check localhost/galaxy
         if: always()
-        run: curl http://localhost/galaxy/api/version
-      - name: Check localhost
+        run: curl https://localhost/galaxy/api/version
+      - name: Get ip address
+        id: address
         if: always()
-        run: curl http://localhost:8000/api/version
-      - name: Check localhost
+        run: echo "ip=$(kubectl get svc -n galaxy galaxy-nginx -o jsonpath='{.spec.clusterIP}')" >> $GITHUB_OUTPUT
+      - name: Check ip
         if: always()
-        run: curl http://localhost:8000/galaxy/api/version
+        run: curl http://${{ steps.address.outputs.ip }}/api/version
+      - name: Check ip/galaxy
+        if: always()
+        run: curl http://${{ steps.address.outputs.ip }}/galaxy/api/version
+      - name: Check ip:8000
+        if: always()
+        run: curl http://${{ steps.address.outputs.ip }}:8000/api/version
+      - name: Check ip:8000/galaxy
+        if: always()
+        run: curl http://${{ steps.address.outputs.ip }}:8000/galaxy/api/version
+      - name: Check ip:8080
+        if: always()
+        run: curl http://${{ steps.address.outputs.ip }}:8080/api/version
+      - name: Check ip:8080/galaxy
+        if: always()
+        run: curl http://${{ steps.address.outputs.ip }}:8080/galaxy/api/version
       - name: Check appVersion
         if: always()
         run: |
