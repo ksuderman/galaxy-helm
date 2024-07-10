@@ -74,7 +74,7 @@ jobs:
         if: always()
         run: |
           appVersion=$(cat galaxy/Chart.yaml | grep ^appVersion: | awk '{print $2}' | tr -d '"')
-          address=$(kubectl get svc -n galaxy galaxy-nginx -o jsonpath="http://{.spec.clusterIP}:{.spec.ports[0].port}/api/version")
+          address=$(kubectl get svc -n galaxy galaxy-nginx -o jsonpath="http://{.spec.clusterIP}:{.spec.ports[0].port}/galaxy/api/version")
           #address="http://${{ steps.address.outputs.ip }}:8000/galaxy/api/version"
           echo "Address is $address"
           curl $address
